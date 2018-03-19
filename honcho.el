@@ -1,4 +1,4 @@
-;;; honcho.el --- Manage external services            -*- lexical-binding: t -*-
+;;; honcho.el --- Run and manage long-running services            -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2016 Mario Rodas <marsam@users.noreply.github.com>
 
@@ -36,7 +36,7 @@
 ;;     (honcho-define-service python-server
 ;;       :command ("python" "-m" "http.server"))
 ;;
-;; To list the services `M-x honcho'.  There is also `M-x honcho-procfile' to
+;; To list the services, use `M-x honcho'.  There is also `M-x honcho-procfile' to
 ;; load services from a Procfile.
 ;;
 ;;     (honcho-define-service node-server
@@ -47,9 +47,9 @@
 ;;
 ;; Troubleshooting:
 ;;
-;; + **The service buffer shows ANSI control sequence**
+;; + **The service buffer contains ANSI control sequences**
 ;;
-;;   `honcho' uses `compilation-mode' underneath, it's recommend to setup
+;;   `honcho' uses `compilation-mode' underneath, it's recommended to setup
 ;;   [xterm-color][] for `compilation-mode'.
 ;;
 ;; Related projects:
@@ -79,19 +79,19 @@
   :group 'applications)
 
 (defcustom honcho-sudo-user "root"
-  "User start a service with the sudo option."
+  "User as which to start a service with the sudo option."
   :type 'string
   :group 'honcho)
 
 (defcustom honcho-working-directory "~"
-  "Default workding directory for honcho services."
+  "Default working directory for honcho services."
   :type '(directory :must-match t)
   :group 'honcho)
 
 (defcustom honcho-procfile-env-suffix-p t
   "Whether to load the dotenv according the procfile extension.
 
-For instance a `honcho-procfile' set to `Procfile.dev' will
+For instance a `honcho-procfile' set to \"Procfile.dev\" will
 load `.env.dev' i.e. will use the same suffix."
   :type 'boolean
   :group 'honcho)
@@ -178,14 +178,16 @@ with VALUE."
   )
 
 (defsubst honcho-as-string (value)
-  "If VALUE is already a string, return it.  Otherwise convert it to a string and return that."
+  "If VALUE is already a string, return it.
+Otherwise convert it to a string and return that."
   (cl-etypecase value
     (stringp value)
     (numberp (number-to-string value))
     (symbolp (symbol-name value))))
 
 (defsubst honcho-as-symbol (string-or-symbol)
-  "If STRING-OR-SYMBOL is already a symbol, return it.  Otherwise convert it to a symbol and return that."
+  "If STRING-OR-SYMBOL is already a symbol, return it.
+Otherwise convert it to a symbol and return that."
   (if (symbolp string-or-symbol) string-or-symbol (intern string-or-symbol)))
 
 (defun honcho-file-lines (file)
@@ -379,7 +381,7 @@ with VALUE."
 
 ;;;###autoload
 (defun honcho ()
-  "Manage external services within Emacs."
+  "Run and manage long-running services."
   (interactive)
   (with-current-buffer (get-buffer-create honcho-buffer-name)
     (honcho-menu-mode)
@@ -388,7 +390,7 @@ with VALUE."
 
 ;;;###autoload
 (defun honcho-procfile (procfile)
-  "Manage external services from a PROCFILE within Emacs."
+  "Manage external services from a PROCFILE."
   (interactive (let* ((root-dir (locate-dominating-file default-directory honcho-procfile))
                       (procfile (and root-dir (expand-file-name honcho-procfile root-dir))))
                  (list (or (and (not current-prefix-arg) procfile)
