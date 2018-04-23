@@ -216,18 +216,22 @@ Otherwise convert it to a symbol and return that."
            when (string-match "^\\(.+[^[:space:]]\\)[[:space:]]*=[[:space:]]*\\(.+\\)" line)
            collect (cons (match-string-no-properties 1 line) (match-string-no-properties 2 line))))
 
+(defun honcho-collect-commands (procfile)
+  "Return a list of commands defined in PROCFILE."
+  (cl-loop for line in (honcho-file-lines procfile)
+           when (string-match honcho-procfile-command-regexp line)
+           collect (list (match-string 1 line) (split-string-and-unquote (match-string 2 line)))))
+
 (defun honcho-collect-procfile-services (procfile)
   "Collect the services defined in PROCFILE."
   (setq honcho-services
-        (cl-loop for line in (honcho-file-lines procfile)
-                 with cwd = (file-name-directory procfile)
+        (cl-loop with cwd = (file-name-directory procfile)
                  with env = (honcho-collect-dotenv honcho-dotenv)
                  with services = honcho-services
-                 when (string-match honcho-procfile-command-regexp line)
-                 for (name cmd) = (list (match-string 1 line) (split-string-and-unquote (match-string 2 line)))
+                 for (name command) in (honcho-collect-commands procfile)
                  if (gethash name services)
-                 do (setf (honcho-service-env it) (honcho-collect-dotenv honcho-dotenv) (honcho-service-command it) cmd)
-                 else do (puthash name (honcho-service-new :name name :command cmd :env env :cwd cwd) services)
+                 do (setf (honcho-service-env it) (honcho-collect-dotenv honcho-dotenv) (honcho-service-command it) command)
+                 else do (puthash name (honcho-service-new :name name :command command :env env :cwd cwd) services)
                  finally return services)))
 
 (defun honcho-process-status (process)
