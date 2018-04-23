@@ -131,6 +131,8 @@ load `.env.dev' i.e. will use the same suffix."
   "Table holding the information for honcho services.")
 (defvar honcho-buffer-name "*honcho*"
   "Name of the buffer used for listing the services.")
+(defvar honcho-services-switch #'switch-to-buffer
+  "Function to call to display and switch to the honcho process list.")
 (defvar honcho-dotenv ".env"
   "Dotenv filename.")
 ;;;###autoload
@@ -387,7 +389,7 @@ Otherwise convert it to a symbol and return that."
   (with-current-buffer (get-buffer-create honcho-buffer-name)
     (honcho-menu-mode)
     (tabulated-list-print)
-    (display-buffer (current-buffer))))
+    (funcall honcho-services-switch (current-buffer))))
 
 ;;;###autoload
 (defun honcho-procfile (procfile)
@@ -404,7 +406,7 @@ Otherwise convert it to a symbol and return that."
         (setq-local honcho-services (if local-p services (make-hash-table :test #'equal)))
         (setq tabulated-list-entries (apply-partially #'honcho-procfile-entries-services procfile))
         (tabulated-list-print)
-        (display-buffer (current-buffer))))))
+        (funcall honcho-services-switch (current-buffer))))))
 
 (provide 'honcho)
 ;;; honcho.el ends here
