@@ -1,4 +1,4 @@
-# honcho - Manage external services
+# honcho - Run and manage long-running services
 
 *Author:* Mario Rodas <marsam@users.noreply.github.com><br>
 *Version:* 0.1<br>
@@ -12,7 +12,7 @@ A minimal example to define a service with `honcho-define-service`
         (honcho-define-service python-server
           :command ("python" "-m" "http.server"))
 
-To list the services <kbd>M-x honcho</kbd>.  There is also <kbd>M-x honcho-procfile</kbd> to
+To list the services, use <kbd>M-x honcho</kbd>.  There is also <kbd>M-x honcho-procfile</kbd> to
 load services from a Procfile.
 
         (honcho-define-service node-server
@@ -23,9 +23,9 @@ load services from a Procfile.
 
 ### Troubleshooting
 
-+ **The service buffer shows ANSI control sequence**
++ **The service buffer contains ANSI control sequences**
 
-  `honcho` uses `compilation-mode` underneath, it's recommend to setup
+  `honcho` uses `compilation-mode` underneath, it's recommended to setup
   [xterm-color][] for `compilation-mode`.
 
 ### Related projects
