@@ -139,11 +139,12 @@ load `.env.dev' i.e. will use the same suffix."
 ;;;###autoload
 (put 'honcho-procfile 'safe-local-variable #'stringp)
 
+;; See: https://github.com/ddollar/foreman/blob/025de2a/lib/foreman/procfile.rb#L5-L9
 (defconst honcho-procfile-command-regexp
-  (rx line-start (* space)
-      (group (+ alnum)) (* space)                 ; name
-      ":"                                         ; separator
-      (* space) (group (one-or-more not-newline)) ; command
+  (rx line-start
+      (group (+ (in alnum ?_)))         ; name
+      ?:                                ; separator
+      (* space) (group (+ any))         ; command
       line-end)
   "Regexp of a Procfile command definition.")
 
